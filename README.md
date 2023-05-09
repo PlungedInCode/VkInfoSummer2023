@@ -1,0 +1,1 @@
+# VkInfoSummer2023
