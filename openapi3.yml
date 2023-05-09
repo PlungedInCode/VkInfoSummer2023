@@ -1,0 +1,178 @@
+---
+swagger: '2.0'
+info:
+  title: Frined Service
+  description: Simple friend service
+  license:
+    name: BSD License
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+- http
+basePath: "/"
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+- Basic: []
+paths:
+  "/friend-request/":
+    post:
+      operationId: friend-request_create
+      description: Отправить одному пользователю заявку в друзья другому
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/FriendRequest"
+      responses:
+        '201':
+          description: ''
+          schema:
+            "$ref": "#/definitions/FriendRequest"
+      tags:
+      - friend-request
+    parameters: []
+  "/friend-request/{request_id}/":
+    put:
+      operationId: friend-request_update
+      description: Принять/отклонить пользователю заявку в друзья от другого пользователя
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+      - friend-request
+    parameters:
+    - name: request_id
+      in: path
+      required: true
+      type: string
+  "/friendship/{friendship_id}/":
+    delete:
+      operationId: friendship_delete
+      description: Удалить пользователю другого пользователя из своих друзей
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - friendship
+    parameters:
+    - name: friendship_id
+      in: path
+      required: true
+      type: string
+  "/register/":
+    post:
+      operationId: register_create
+      description: Зарегистрировать нового пользователя
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/User"
+      responses:
+        '201':
+          description: ''
+          schema:
+            "$ref": "#/definitions/User"
+      tags:
+      - register
+    parameters: []
+  "/user/{user_id}/friend-requests/":
+    get:
+      operationId: user_friend-requests_list
+      description: Посмотреть пользователю список своих исходящих и входящих заявок
+        в друзья
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+      - user
+    parameters:
+    - name: user_id
+      in: path
+      required: true
+      type: string
+  "/user/{user_id}/friends/":
+    get:
+      operationId: user_friends_list
+      description: Посмотреть пользователю список своих друзей
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+      - user
+    parameters:
+    - name: user_id
+      in: path
+      required: true
+      type: string
+  "/user/{user_id}/friendship-status/{target_user_id}/":
+    get:
+      operationId: user_friendship-status_read
+      description: "Получить пользователю статус дружбы с каким-то другим пользователем
+        \n(нет ничего / есть исходящая заявка / есть входящая заявка / уже друзья)"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+      - user
+    parameters:
+    - name: target_user_id
+      in: path
+      required: true
+      type: string
+    - name: user_id
+      in: path
+      required: true
+      type: string
+definitions:
+  FriendRequest:
+    required:
+    - status
+    - sender
+    - recipient
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      status:
+        title: Status
+        type: string
+        enum:
+        - pending
+        - accepted
+        - rejected
+      sender:
+        title: Sender
+        type: integer
+      recipient:
+        title: Recipient
+        type: integer
+  User:
+    required:
+    - username
+    type: object
+    properties:
+      id:
+        title: Id
+        type: integer
+        readOnly: true
+      username:
+        title: Username
+        type: string
+        maxLength: 100
+        minLength: 1
